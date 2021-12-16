@@ -1735,7 +1735,7 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  7080: function($0, $1, $2) {let data = Module.HEAPU8.slice($0, $0 + $1 * $2 * 4); let context = Module['canvas'].getContext('2d'); let imageData = context.getImageData(0, 0, $1, $2); imageData.data.set(data); context.putImageData(imageData, 0, 0);}
+  7816: function($0, $1, $2) {let data = Module.HEAPU8.slice($0, $0 + $1 * $2 * 4); let context = Module['canvas'].getContext('2d'); let imageData = context.getImageData(0, 0, $1, $2); imageData.data.set(data); context.putImageData(imageData, 0, 0);}
 };
 
 
