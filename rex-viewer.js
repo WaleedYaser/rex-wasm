@@ -197,7 +197,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"files": [{"filename": "/data/dino.stl", "start": 0, "end": 32584}, {"filename": "/data/cube.stl", "start": 32584, "end": 33268}], "remote_package_size": 33268, "package_uuid": "5e22b83f-9be5-4a0d-a49e-2d3d2510a89b"});
+   loadPackage({"files": [{"filename": "/data/dino.stl", "start": 0, "end": 32584}, {"filename": "/data/cube.stl", "start": 32584, "end": 33268}], "remote_package_size": 33268, "package_uuid": "8297b06f-70c0-461b-90f5-70b8e9955e4c"});
   
   })();
   
