@@ -125,8 +125,6 @@ var Module = typeof Module !== 'undefined' ? Module : {};
         if (!check) throw msg + new Error().stack;
       }
   Module['FS_createPath']("/", "data", true, true);
-Module['FS_createPath']("/data", "girl", true, true);
-Module['FS_createPath']("/data/girl", "textures", true, true);
 
           /** @constructor */
           function DataRequest(start, end, audio) {
@@ -199,7 +197,7 @@ Module['FS_createPath']("/data/girl", "textures", true, true);
     }
   
    }
-   loadPackage({"files": [{"filename": "/data/cube.stl", "start": 0, "end": 684}, {"filename": "/data/dino.stl", "start": 684, "end": 33268}, {"filename": "/data/bunny.stl", "start": 33268, "end": 4364952}, {"filename": "/data/girl/LICENSE.txt", "start": 4364952, "end": 4365125}, {"filename": "/data/girl/scene.gltf", "start": 4365125, "end": 4373935}, {"filename": "/data/girl/scene.bin", "start": 4373935, "end": 8242055}, {"filename": "/data/girl/textures/color_baseColor.jpeg", "start": 8242055, "end": 9875816}], "remote_package_size": 9875816, "package_uuid": "7d5c4d82-f44a-41c9-9e86-555ab1c3fa32"});
+   loadPackage({"files": [{"filename": "/data/dino.stl", "start": 0, "end": 32584}, {"filename": "/data/cube.stl", "start": 32584, "end": 33268}], "remote_package_size": 33268, "package_uuid": "5e22b83f-9be5-4a0d-a49e-2d3d2510a89b"});
   
   })();
   
