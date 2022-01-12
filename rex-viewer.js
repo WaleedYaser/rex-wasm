@@ -125,6 +125,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
         if (!check) throw msg + new Error().stack;
       }
   Module['FS_createPath']("/", "data", true, true);
+Module['FS_createPath']("/data", "african_head", true, true);
 
           /** @constructor */
           function DataRequest(start, end, audio) {
@@ -197,7 +198,7 @@ var Module = typeof Module !== 'undefined' ? Module : {};
     }
   
    }
-   loadPackage({"files": [{"filename": "/data/dino.stl", "start": 0, "end": 32584}, {"filename": "/data/cube.stl", "start": 32584, "end": 33268}], "remote_package_size": 33268, "package_uuid": "8d89205d-72f6-49b8-b9f4-0a9b8acfe660"});
+   loadPackage({"files": [{"filename": "/data/african_head/african_head.obj", "start": 0, "end": 194973}, {"filename": "/data/african_head/african_head_diffuse.tga", "start": 194973, "end": 2996504}], "remote_package_size": 2996504, "package_uuid": "37286388-795a-45f9-94db-2221cf11fadd"});
   
   })();
   
@@ -1913,7 +1914,7 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  6360: function($0, $1, $2) {let data = Module.HEAPU8.slice($0, $0 + $1 * $2 * 4); let context = Module['canvas'].getContext('2d'); let imageData = context.getImageData(0, 0, $1, $2); imageData.data.set(data); context.putImageData(imageData, 0, 0);}
+  10648: function($0, $1, $2) {let data = Module.HEAPU8.slice($0, $0 + $1 * $2 * 4); let context = Module['canvas'].getContext('2d'); let imageData = context.getImageData(0, 0, $1, $2); imageData.data.set(data); context.putImageData(imageData, 0, 0);}
 };
 
 
@@ -2013,6 +2014,10 @@ var ASM_CONSTS = {
       return demangleAll(js);
     }
 
+  function ___assert_fail(condition, filename, line, func) {
+      abort('Assertion failed: ' + UTF8ToString(condition) + ', at: ' + [filename ? UTF8ToString(filename) : 'unknown filename', line, func ? UTF8ToString(func) : 'unknown function']);
+    }
+
   function _atexit(func, arg) {
     }
   function ___cxa_atexit(a0,a1
@@ -2020,6 +2025,11 @@ var ASM_CONSTS = {
   return _atexit(a0,a1);
   }
 
+  function setErrNo(value) {
+      HEAP32[((___errno_location())>>2)] = value;
+      return value;
+    }
+  
   var PATH = {splitPath:function(filename) {
         var splitPathRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
         return splitPathRe.exec(filename).slice(1);
@@ -4367,6 +4377,63 @@ var ASM_CONSTS = {
         else assert(high === -1);
         return low;
       }};
+  function ___syscall_fcntl64(fd, cmd, varargs) {SYSCALLS.varargs = varargs;
+  try {
+  
+      var stream = SYSCALLS.getStreamFromFD(fd);
+      switch (cmd) {
+        case 0: {
+          var arg = SYSCALLS.get();
+          if (arg < 0) {
+            return -28;
+          }
+          var newStream;
+          newStream = FS.open(stream.path, stream.flags, 0, arg);
+          return newStream.fd;
+        }
+        case 1:
+        case 2:
+          return 0;  // FD_CLOEXEC makes no sense for a single process.
+        case 3:
+          return stream.flags;
+        case 4: {
+          var arg = SYSCALLS.get();
+          stream.flags |= arg;
+          return 0;
+        }
+        case 5:
+        /* case 5: Currently in musl F_GETLK64 has same value as F_GETLK, so omitted to avoid duplicate case blocks. If that changes, uncomment this */ {
+          
+          var arg = SYSCALLS.get();
+          var offset = 0;
+          // We're always unlocked.
+          HEAP16[(((arg)+(offset))>>1)] = 2;
+          return 0;
+        }
+        case 6:
+        case 7:
+        /* case 6: Currently in musl F_SETLK64 has same value as F_SETLK, so omitted to avoid duplicate case blocks. If that changes, uncomment this */
+        /* case 7: Currently in musl F_SETLKW64 has same value as F_SETLKW, so omitted to avoid duplicate case blocks. If that changes, uncomment this */
+          
+          
+          return 0; // Pretend that the locking is successful.
+        case 16:
+        case 8:
+          return -28; // These are for sockets. We don't have them fully implemented yet.
+        case 9:
+          // musl trusts getown return values, due to a bug where they must be, as they overlap with errors. just return -1 here, so fnctl() returns that, and we set errno ourselves.
+          setErrNo(28);
+          return -1;
+        default: {
+          return -28;
+        }
+      }
+    } catch (e) {
+    if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
+    return -e.errno;
+  }
+  }
+
   function ___syscall_fstat64(fd, buf) {try {
   
       var stream = SYSCALLS.getStreamFromFD(fd);
@@ -4400,6 +4467,60 @@ var ASM_CONSTS = {
       if (size < cwdLengthInBytes + 1) return -68;
       stringToUTF8(cwd, buf, size);
       return buf;
+    } catch (e) {
+    if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
+    return -e.errno;
+  }
+  }
+
+  function ___syscall_ioctl(fd, op, varargs) {SYSCALLS.varargs = varargs;
+  try {
+  
+      var stream = SYSCALLS.getStreamFromFD(fd);
+      switch (op) {
+        case 21509:
+        case 21505: {
+          if (!stream.tty) return -59;
+          return 0;
+        }
+        case 21510:
+        case 21511:
+        case 21512:
+        case 21506:
+        case 21507:
+        case 21508: {
+          if (!stream.tty) return -59;
+          return 0; // no-op, not actually adjusting terminal settings
+        }
+        case 21519: {
+          if (!stream.tty) return -59;
+          var argp = SYSCALLS.get();
+          HEAP32[((argp)>>2)] = 0;
+          return 0;
+        }
+        case 21520: {
+          if (!stream.tty) return -59;
+          return -28; // not supported
+        }
+        case 21531: {
+          var argp = SYSCALLS.get();
+          return FS.ioctl(stream, op, argp);
+        }
+        case 21523: {
+          // TODO: in theory we should write to the winsize struct that gets
+          // passed in, but for now musl doesn't read anything on it
+          if (!stream.tty) return -59;
+          return 0;
+        }
+        case 21524: {
+          // TODO: technically, this ioctl call should change the window size.
+          // but, since emscripten doesn't have any concept of a terminal window
+          // yet, we'll just silently throw it away as we do TIOCGWINSZ
+          if (!stream.tty) return -59;
+          return 0;
+        }
+        default: abort('bad ioctl syscall ' + op);
+      }
     } catch (e) {
     if (typeof FS === 'undefined' || !(e instanceof FS.ErrnoError)) throw e;
     return -e.errno;
@@ -4458,11 +4579,6 @@ var ASM_CONSTS = {
   ;
   
   var _emscripten_get_now_is_monotonic = true;;
-  
-  function setErrNo(value) {
-      HEAP32[((___errno_location())>>2)] = value;
-      return value;
-    }
   function _clock_gettime(clk_id, tp) {
       // int clock_gettime(clockid_t clk_id, struct timespec *tp);
       var now;
@@ -5105,10 +5221,13 @@ function tryParseAsDataURI(filename) {
 
 
 var asmLibraryArg = {
+  "__assert_fail": ___assert_fail,
   "__cxa_atexit": ___cxa_atexit,
+  "__syscall_fcntl64": ___syscall_fcntl64,
   "__syscall_fstat64": ___syscall_fstat64,
   "__syscall_fstatat64": ___syscall_fstatat64,
   "__syscall_getcwd": ___syscall_getcwd,
+  "__syscall_ioctl": ___syscall_ioctl,
   "__syscall_lstat64": ___syscall_lstat64,
   "__syscall_open": ___syscall_open,
   "__syscall_readlink": ___syscall_readlink,
