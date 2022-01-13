@@ -198,7 +198,7 @@ Module['FS_createPath']("/data", "african_head", true, true);
     }
   
    }
-   loadPackage({"files": [{"filename": "/data/african_head/african_head.obj", "start": 0, "end": 194973}, {"filename": "/data/african_head/african_head_diffuse.tga", "start": 194973, "end": 2996504}], "remote_package_size": 2996504, "package_uuid": "37286388-795a-45f9-94db-2221cf11fadd"});
+   loadPackage({"files": [{"filename": "/data/african_head/african_head.obj", "start": 0, "end": 194973}, {"filename": "/data/african_head/african_head_diffuse.tga", "start": 194973, "end": 2996504}], "remote_package_size": 2996504, "package_uuid": "0a3aaf1d-c925-4bf8-8455-5a105feaa52a"});
   
   })();
   
@@ -1914,7 +1914,7 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  10648: function($0, $1, $2) {let data = Module.HEAPU8.slice($0, $0 + $1 * $2 * 4); let context = Module['canvas'].getContext('2d'); let imageData = context.getImageData(0, 0, $1, $2); imageData.data.set(data); context.putImageData(imageData, 0, 0);}
+  10936: function($0, $1, $2) {let data = Module.HEAPU8.slice($0, $0 + $1 * $2 * 4); let context = Module['canvas'].getContext('2d'); let imageData = context.getImageData(0, 0, $1, $2); imageData.data.set(data); context.putImageData(imageData, 0, 0);}
 };
 
 
@@ -4839,6 +4839,118 @@ var ASM_CONSTS = {
       return 0;
     }
 
+  function registerKeyEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
+      if (!JSEvents.keyEvent) JSEvents.keyEvent = _malloc( 176 );
+  
+      var keyEventHandlerFunc = function(e) {
+        assert(e);
+  
+        var keyEventData = JSEvents.keyEvent;
+        HEAPF64[((keyEventData)>>3)] = e.timeStamp;
+  
+        var idx = keyEventData >> 2;
+  
+        HEAP32[idx + 2] = e.location;
+        HEAP32[idx + 3] = e.ctrlKey;
+        HEAP32[idx + 4] = e.shiftKey;
+        HEAP32[idx + 5] = e.altKey;
+        HEAP32[idx + 6] = e.metaKey;
+        HEAP32[idx + 7] = e.repeat;
+        HEAP32[idx + 8] = e.charCode;
+        HEAP32[idx + 9] = e.keyCode;
+        HEAP32[idx + 10] = e.which;
+        stringToUTF8(e.key || '', keyEventData + 44, 32);
+        stringToUTF8(e.code || '', keyEventData + 76, 32);
+        stringToUTF8(e.char || '', keyEventData + 108, 32);
+        stringToUTF8(e.locale || '', keyEventData + 140, 32);
+  
+        if (getWasmTableEntry(callbackfunc)(eventTypeId, keyEventData, userData)) e.preventDefault();
+      };
+  
+      var eventHandler = {
+        target: findEventTarget(target),
+        allowsDeferredCalls: true,
+        eventTypeString: eventTypeString,
+        callbackfunc: callbackfunc,
+        handlerFunc: keyEventHandlerFunc,
+        useCapture: useCapture
+      };
+      JSEvents.registerOrRemoveHandler(eventHandler);
+    }
+  function _emscripten_set_keydown_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
+      registerKeyEventCallback(target, userData, useCapture, callbackfunc, 2, "keydown", targetThread);
+      return 0;
+    }
+
+  function _emscripten_set_keyup_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
+      registerKeyEventCallback(target, userData, useCapture, callbackfunc, 3, "keyup", targetThread);
+      return 0;
+    }
+
+  function fillMouseEventData(eventStruct, e, target) {
+      assert(eventStruct % 4 == 0);
+      HEAPF64[((eventStruct)>>3)] = e.timeStamp;
+      var idx = eventStruct >> 2;
+      HEAP32[idx + 2] = e.screenX;
+      HEAP32[idx + 3] = e.screenY;
+      HEAP32[idx + 4] = e.clientX;
+      HEAP32[idx + 5] = e.clientY;
+      HEAP32[idx + 6] = e.ctrlKey;
+      HEAP32[idx + 7] = e.shiftKey;
+      HEAP32[idx + 8] = e.altKey;
+      HEAP32[idx + 9] = e.metaKey;
+      HEAP16[idx*2 + 20] = e.button;
+      HEAP16[idx*2 + 21] = e.buttons;
+  
+      HEAP32[idx + 11] = e["movementX"]
+        ;
+  
+      HEAP32[idx + 12] = e["movementY"]
+        ;
+  
+      var rect = getBoundingClientRect(target);
+      HEAP32[idx + 13] = e.clientX - rect.left;
+      HEAP32[idx + 14] = e.clientY - rect.top;
+  
+    }
+  function registerMouseEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
+      if (!JSEvents.mouseEvent) JSEvents.mouseEvent = _malloc( 72 );
+      target = findEventTarget(target);
+  
+      var mouseEventHandlerFunc = function(ev) {
+        var e = ev || event;
+  
+        // TODO: Make this access thread safe, or this could update live while app is reading it.
+        fillMouseEventData(JSEvents.mouseEvent, e, target);
+  
+        if (getWasmTableEntry(callbackfunc)(eventTypeId, JSEvents.mouseEvent, userData)) e.preventDefault();
+      };
+  
+      var eventHandler = {
+        target: target,
+        allowsDeferredCalls: eventTypeString != 'mousemove' && eventTypeString != 'mouseenter' && eventTypeString != 'mouseleave', // Mouse move events do not allow fullscreen/pointer lock requests to be handled in them!
+        eventTypeString: eventTypeString,
+        callbackfunc: callbackfunc,
+        handlerFunc: mouseEventHandlerFunc,
+        useCapture: useCapture
+      };
+      JSEvents.registerOrRemoveHandler(eventHandler);
+    }
+  function _emscripten_set_mousedown_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
+      registerMouseEventCallback(target, userData, useCapture, callbackfunc, 5, "mousedown", targetThread);
+      return 0;
+    }
+
+  function _emscripten_set_mousemove_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
+      registerMouseEventCallback(target, userData, useCapture, callbackfunc, 8, "mousemove", targetThread);
+      return 0;
+    }
+
+  function _emscripten_set_mouseup_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
+      registerMouseEventCallback(target, userData, useCapture, callbackfunc, 6, "mouseup", targetThread);
+      return 0;
+    }
+
   function registerUiEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
       if (!JSEvents.uiEvent) JSEvents.uiEvent = _malloc( 36 );
   
@@ -4883,6 +4995,41 @@ var ASM_CONSTS = {
   function _emscripten_set_resize_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
       registerUiEventCallback(target, userData, useCapture, callbackfunc, 10, "resize", targetThread);
       return 0;
+    }
+
+  function registerWheelEventCallback(target, userData, useCapture, callbackfunc, eventTypeId, eventTypeString, targetThread) {
+      if (!JSEvents.wheelEvent) JSEvents.wheelEvent = _malloc( 104 );
+  
+      // The DOM Level 3 events spec event 'wheel'
+      var wheelHandlerFunc = function(ev) {
+        var e = ev || event;
+        var wheelEvent = JSEvents.wheelEvent;
+        fillMouseEventData(wheelEvent, e, target);
+        HEAPF64[(((wheelEvent)+(72))>>3)] = e["deltaX"];
+        HEAPF64[(((wheelEvent)+(80))>>3)] = e["deltaY"];
+        HEAPF64[(((wheelEvent)+(88))>>3)] = e["deltaZ"];
+        HEAP32[(((wheelEvent)+(96))>>2)] = e["deltaMode"];
+        if (getWasmTableEntry(callbackfunc)(eventTypeId, wheelEvent, userData)) e.preventDefault();
+      };
+  
+      var eventHandler = {
+        target: target,
+        allowsDeferredCalls: true,
+        eventTypeString: eventTypeString,
+        callbackfunc: callbackfunc,
+        handlerFunc: wheelHandlerFunc,
+        useCapture: useCapture
+      };
+      JSEvents.registerOrRemoveHandler(eventHandler);
+    }
+  function _emscripten_set_wheel_callback_on_thread(target, userData, useCapture, callbackfunc, targetThread) {
+      target = findEventTarget(target);
+      if (typeof target.onwheel !== 'undefined') {
+        registerWheelEventCallback(target, userData, useCapture, callbackfunc, 9, "wheel", targetThread);
+        return 0;
+      } else {
+        return -1;
+      }
     }
 
   function _fd_close(fd) {try {
@@ -5240,7 +5387,13 @@ var asmLibraryArg = {
   "emscripten_request_animation_frame_loop": _emscripten_request_animation_frame_loop,
   "emscripten_resize_heap": _emscripten_resize_heap,
   "emscripten_set_canvas_element_size": _emscripten_set_canvas_element_size,
+  "emscripten_set_keydown_callback_on_thread": _emscripten_set_keydown_callback_on_thread,
+  "emscripten_set_keyup_callback_on_thread": _emscripten_set_keyup_callback_on_thread,
+  "emscripten_set_mousedown_callback_on_thread": _emscripten_set_mousedown_callback_on_thread,
+  "emscripten_set_mousemove_callback_on_thread": _emscripten_set_mousemove_callback_on_thread,
+  "emscripten_set_mouseup_callback_on_thread": _emscripten_set_mouseup_callback_on_thread,
   "emscripten_set_resize_callback_on_thread": _emscripten_set_resize_callback_on_thread,
+  "emscripten_set_wheel_callback_on_thread": _emscripten_set_wheel_callback_on_thread,
   "fd_close": _fd_close,
   "fd_read": _fd_read,
   "fd_seek": _fd_seek,
