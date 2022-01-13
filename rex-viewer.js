@@ -198,7 +198,7 @@ Module['FS_createPath']("/data", "african_head", true, true);
     }
   
    }
-   loadPackage({"files": [{"filename": "/data/african_head/african_head.obj", "start": 0, "end": 194973}, {"filename": "/data/african_head/african_head_diffuse.tga", "start": 194973, "end": 2996504}], "remote_package_size": 2996504, "package_uuid": "0a3aaf1d-c925-4bf8-8455-5a105feaa52a"});
+   loadPackage({"files": [{"filename": "/data/african_head/african_head.obj", "start": 0, "end": 194973}, {"filename": "/data/african_head/african_head_diffuse.tga", "start": 194973, "end": 2996504}], "remote_package_size": 2996504, "package_uuid": "ae3e251c-a674-4072-9c55-c06cb49e53f8"});
   
   })();
   
